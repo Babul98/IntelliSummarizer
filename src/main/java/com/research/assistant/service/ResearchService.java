@@ -1,25 +1,26 @@
-package com.research.assistant;
+package com.research.assistant.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.research.assistant.config.GeminiApiProperties;
+import com.research.assistant.dto.GeminiResponse;
+import com.research.assistant.dto.ResearchRequest;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class ResearchService {
-  @Value("${gemini.api.url}")
-  private String geminiApiUrl;
-
-  @Value("${gemini.api.key}")
-  private String geminiApiKey;
-
   private final WebClient webClient;
   private final ObjectMapper objectMapper;
+  private final GeminiApiProperties geminiApiProperties;
 
-  public ResearchService(WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
+  public ResearchService(
+      WebClient.Builder webClientBuilder,
+      ObjectMapper objectMapper,
+      GeminiApiProperties geminiApiProperties) {
     this.webClient = webClientBuilder.build();
     this.objectMapper = objectMapper;
+    this.geminiApiProperties = geminiApiProperties;
   }
 
   public String processContent(ResearchRequest request) {
@@ -30,17 +31,16 @@ public class ResearchService {
     Map<String, Object> requestBody =
         Map.of("contents", new Object[] {Map.of("parts", new Object[] {Map.of("text", prompt)})});
 
+    String fullUrl = geminiApiProperties.getUrl() + geminiApiProperties.getKey();
+
     String response =
         webClient
             .post()
-            .uri(geminiApiUrl + geminiApiKey)
+            .uri(fullUrl)
             .bodyValue(requestBody)
             .retrieve()
             .bodyToMono(String.class)
             .block();
-
-    // Parse the response
-    // Return response
 
     return extractTextFromResponse(response);
   }
