@@ -26,17 +26,16 @@ public class ResearchService {
   public String processContent(ResearchRequest request) {
     // Build the prompt
     String prompt = buildPrompt(request);
+    String baseUrl = geminiApiProperties.getUrl();
 
     // Query the AI Model API
     Map<String, Object> requestBody =
         Map.of("contents", new Object[] {Map.of("parts", new Object[] {Map.of("text", prompt)})});
 
-    String fullUrl = geminiApiProperties.getUrl() + geminiApiProperties.getKey();
-
     String response =
         webClient
             .post()
-            .uri(fullUrl)
+            .uri(baseUrl + geminiApiProperties.getKey())
             .bodyValue(requestBody)
             .retrieve()
             .bodyToMono(String.class)
