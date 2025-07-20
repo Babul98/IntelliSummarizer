@@ -16,7 +16,7 @@ A Spring Boot microservice for processing and analyzing content using the Gemini
 
 - JDK 17 (or newer)  
 - Maven 3.8+  
-- A valid [Google Generative Language API key](https://makersuite.google.com/app/apikey)
+- Get your valid from [Google Generative Language API key](https://makersuite.google.com/app/apikey)
 
 ---
 
@@ -31,16 +31,19 @@ cd research-assistant
 
 ### 2. Set Up Secrets
 
-Rename the example properties file and add your actual API key:
-
-```bash
-mv src/main/resources/application.properties.example src/main/resources/application.properties
+Rename the example .env file and add your Gemini API key:
+```
+mv .env.example .env
 ```
 
 Then edit the file to include:
-
 ```
-gemini.api.key=YOUR_GOOGLE_API_KEY_HERE
+export GEMINI_API_KEY=YOUR_GOOGLE_API_KEY_HERE
+```
+
+Source the .env file:
+```
+source .env
 ```
 
 ### 3. Build & Run
