@@ -65,3 +65,4 @@ src/main/resources/application.yml
 
 # === Documentation files to exclude ===
 HELP.md
+.env
