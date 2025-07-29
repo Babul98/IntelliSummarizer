@@ -52,10 +52,15 @@
       <version>0.1.0</version>
     </dependency>
     <dependency>
-    <groupId>io.github.a2asdk</groupId>
-    <artifactId>a2a-java-reference-server</artifactId>
-    <version>0.2.5</version>
-</dependency>
+      <groupId>io.github.a2asdk</groupId>
+      <artifactId>a2a-java-reference-server</artifactId>
+      <version>0.2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.a2asdk</groupId>
+      <artifactId>a2a-java-sdk-client</artifactId>
+      <version>0.2.5</version>
+    </dependency>
 
     <!-- Utils -->
 		<dependency>
