@@ -110,3 +110,5 @@ src/
     - [Java Github](https://github.com/google/adk-java)
     - [Java Streaming](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming-java/#creating-live-audio-run-tool)
     - [Java Samples](https://github.com/google/adk-samples)
+- Google A2A:
+    - [Java Github](https://github.com/a2aproject/a2a-java?tab=readme-ov-file)

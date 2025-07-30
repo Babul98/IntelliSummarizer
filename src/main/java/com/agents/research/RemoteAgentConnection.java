@@ -22,7 +22,7 @@ public class RemoteAgentConnection {
     this.agentCard = agentCard;
   }
 
-  public SendMessageResponse SendMessage(
+  public SendMessageResponse sendMessage(
       Role role, List<Part<?>> parts, String messageId, String taskId, String contextId)
       throws A2AServerException {
     Message message =
