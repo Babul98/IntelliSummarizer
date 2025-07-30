@@ -38,7 +38,7 @@ mv .env.example .env
 
 Then edit the file to include:
 ```
-export GEMINI_API_KEY=YOUR_GOOGLE_API_KEY_HERE
+export GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY_HERE
 ```
 
 Source the .env file:
@@ -103,3 +103,12 @@ src/
 │       └── application.properties          // (ignored, holds secrets)
 └── test/                                   // Unit tests
 ```
+
+# Documentations
+- Google ADK:
+    - [Quickstart](https://google.github.io/adk-docs/get-started/quickstart/)
+    - [Java Github](https://github.com/google/adk-java)
+    - [Java Streaming](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming-java/#creating-live-audio-run-tool)
+    - [Java Samples](https://github.com/google/adk-samples)
+- Google A2A:
+    - [Java Github](https://github.com/a2aproject/a2a-java?tab=readme-ov-file)
