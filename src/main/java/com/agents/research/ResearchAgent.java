@@ -14,6 +14,7 @@ import com.google.adk.sessions.State;
 import com.google.adk.tools.BaseTool;
 import com.google.adk.tools.ToolContext;
 import com.google.common.collect.ImmutableList;
+import io.a2a.A2A;
 import io.a2a.spec.AgentCard;
 import io.a2a.spec.EventKind;
 import io.a2a.spec.Message.Role;
@@ -35,11 +36,10 @@ import java.util.logging.Logger;
 public class ResearchAgent {
   private static final Logger ADK_LOGGER = Logger.getLogger(ResearchAgent.class.getName());
 
+  public BaseAgent ROOT_AGENT;
+  public Runner RUNNER;
   private static final String AGENT_NAME = "Research_Agent";
   private static final String MODEL_NAME = "gemini-2.0-flash";
-
-  private BaseAgent ROOT_AGENT;
-  private Runner RUNNER;
 
   private String agents = "";
   private Map<String, AgentCard> agentCards = new HashMap<>();
@@ -61,6 +61,23 @@ public class ResearchAgent {
     BaseArtifactService artifactService = new InMemoryArtifactService();
     BaseSessionService sessionService = new InMemorySessionService();
     this.RUNNER = new Runner(ROOT_AGENT, AGENT_NAME, artifactService, sessionService);
+
+    // Initialize Host Agent
+    List<String> AgentURLs = List.of("http://localhost:10001", "http://localhost:10002");
+    for (String url : AgentURLs) {
+      try {
+        AgentCard card = A2A.getAgentCard(url);
+        RemoteAgentConnection connection = new RemoteAgentConnection(card);
+
+        remoteAgentConnections.put(card.name(), connection);
+        agentCards.put(card.name(), card);
+        ADK_LOGGER.info("Fetched agentCard for: `" + url + "` with agent:" + card.name());
+
+      } catch (Exception e) {
+        ADK_LOGGER.warning("Unable to fetch AgentCard for: " + url);
+        continue;
+      }
+    }
   }
 
   public List<JsonNode> sendMessage(String agentName, String task, ToolContext toolContext) {

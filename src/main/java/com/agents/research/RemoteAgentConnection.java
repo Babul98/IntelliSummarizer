@@ -17,8 +17,8 @@ public class RemoteAgentConnection {
   private A2AClient agentClient;
   private AgentCard agentCard;
 
-  public RemoteAgentConnection(AgentCard agentCard, String agentUrl) {
-    this.agentClient = new A2AClient(agentUrl);
+  public RemoteAgentConnection(AgentCard agentCard) {
+    this.agentClient = new A2AClient(agentCard);
     this.agentCard = agentCard;
   }
 
