@@ -1,5 +1,7 @@
 package com.agents.research;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.LlmAgent;
 import com.google.adk.agents.ReadonlyContext;
@@ -13,11 +15,11 @@ import com.google.adk.tools.BaseTool;
 import com.google.adk.tools.ToolContext;
 import com.google.common.collect.ImmutableList;
 import io.a2a.spec.AgentCard;
-import io.a2a.spec.Artifact;
 import io.a2a.spec.EventKind;
 import io.a2a.spec.Message.Role;
 import io.a2a.spec.Part;
 import io.a2a.spec.SendMessageResponse;
+import io.a2a.spec.Task;
 import io.a2a.spec.TextPart;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +63,7 @@ public class ResearchAgent {
     this.RUNNER = new Runner(ROOT_AGENT, AGENT_NAME, artifactService, sessionService);
   }
 
-  public List<Object> sendMessage(String agentName, String task, ToolContext toolContext) {
+  public List<JsonNode> sendMessage(String agentName, String task, ToolContext toolContext) {
     State state = toolContext.state();
     String taskId = (String) state.getOrDefault("task_id", UUID.randomUUID().toString());
     String contextId = (String) state.getOrDefault("context_id", UUID.randomUUID().toString());
@@ -83,18 +85,31 @@ public class ResearchAgent {
       }
 
       EventKind kind = res.getResult();
-      ADK_LOGGER.info("Event Kind for response: " + kind.getKind());
-      if (kind == null) {
+      if (kind == null || kind.getKind() != Task.TASK) {
+        ADK_LOGGER.severe("Received a non-success or non-task response. Cannot proceed.");
         return List.of();
       }
 
-      List<Part<?>> collected = new ArrayList<>();
-      for (Artifact art : kind.artifacts()) {
-        if (art.parts() != null) {
-          collected.addAll(art.parts());
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonResponse = objectMapper.writeValueAsString(res);
+      JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+      ADK_LOGGER.info("send_response: " + jsonResponse);
+
+      JsonNode resultNode = jsonNode.path("result");
+      List<JsonNode> resp = new ArrayList<>();
+
+      JsonNode artifactsNode = resultNode.path("artifacts");
+      if (artifactsNode.isArray()) {
+        for (JsonNode artifact : artifactsNode) {
+          JsonNode partsNode = artifact.path("parts");
+          if (partsNode.isArray()) {
+            for (JsonNode part : partsNode) {
+              resp.add(part);
+            }
+          }
         }
       }
-      return collected;
+      return resp;
 
     } catch (Exception e) {
       ADK_LOGGER.severe("Error sending message to " + agentName + ": " + e.getMessage());
